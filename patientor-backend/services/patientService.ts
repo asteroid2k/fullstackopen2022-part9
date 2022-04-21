@@ -1,16 +1,19 @@
 import patientData from "../data/patient";
-import { NewPatientEntry, NonSensitivePatient, Patient } from "../types";
+import { NewPatientEntry, PublicPatient, Patient } from "../types";
 import { nanoid } from "nanoid";
-import { parseDate, parseGender, parseString } from "../util/parsers";
+import {
+  parseDate,
+  parseGender,
+  parseString,
+  publicizePatient,
+} from "../util/parsers";
 
-export const getAll = (): NonSensitivePatient[] => {
-  return patientData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
-    id,
-    name,
-    dateOfBirth,
-    gender,
-    occupation,
-  }));
+export const getAll = (): PublicPatient[] => {
+  return patientData.map((patient) => publicizePatient(patient));
+};
+
+export const getById = (patientId: string): Patient | undefined => {
+  return patientData.find((patient) => patient.id === patientId);
 };
 
 export const create = (patient: NewPatientEntry): Patient => {
@@ -28,6 +31,7 @@ export const toNewPatientEntry = (obj: any): NewPatientEntry => {
     dateOfBirth: parseDate(obj.dateOfBirth),
     gender: parseGender(obj.gender),
     occupation: parseString(obj.occupation, "occupation"),
+    entries: [],
   };
   return newPatient;
 };

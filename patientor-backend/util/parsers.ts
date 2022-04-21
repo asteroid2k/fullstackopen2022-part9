@@ -1,4 +1,4 @@
-import { Gender } from "../types";
+import { Gender, PublicPatient } from "../types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
@@ -30,4 +30,14 @@ export const parseGender = (gender: unknown): Gender => {
     throw new Error("Incorrect or missing gender: " + gender);
   }
   return gender;
+};
+
+export const publicizePatient = ({
+  id,
+  name,
+  dateOfBirth,
+  gender,
+  occupation,
+}: PublicPatient): PublicPatient => {
+  return { id, name, dateOfBirth, gender, occupation };
 };
