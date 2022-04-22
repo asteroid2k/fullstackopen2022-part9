@@ -18,7 +18,7 @@ export const getById = (patientId: string): Patient | undefined => {
 
 export const create = (patient: NewPatientEntry): Patient => {
   const id: string = nanoid();
-  const newPatient = { ...patient, id };
+  const newPatient = { ...patient, id, entries: [] };
   patientData.push(newPatient);
   return newPatient;
 };
