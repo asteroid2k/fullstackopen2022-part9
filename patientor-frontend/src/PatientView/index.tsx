@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiBaseUrl } from "../constants";
 import { updatePatient, useStateValue } from "../state";
-import { Patient } from "../types";
-import MaleIcon from "@mui/icons-material/Male";
-import FemaleIcon from "@mui/icons-material/Female";
+import { Entry, Patient } from "../types";
+
+import { Avatar, Container, Stack, Typography } from "@mui/material";
+import GenderIcon from "../components/GenderIcon";
+import EntryDetails from "../components/EntryDetails";
 
 const PatientView = ({ patient }: { patient: Patient | null }) => {
   const [, dispatch] = useStateValue();
@@ -46,12 +48,34 @@ const PatientView = ({ patient }: { patient: Patient | null }) => {
 
   return (
     <div>
-      <h3>
-        {patientDetails.name}{" "}
-        {patientDetails.gender === "male" ? <MaleIcon /> : <FemaleIcon />}
-      </h3>
-      <p>SSN: {patientDetails.ssn}</p>
-      <p>Occupation: {patientDetails.occupation}</p>
+      <Container maxWidth="md" sx={{ margin: "1rem auto" }}>
+        <div style={{ textAlign: "center" }}>
+          <Avatar
+            sx={{ width: 80, height: 80, margin: "1rem auto" }}
+            src={`https://avatars.dicebear.com/api/initials/${patientDetails.name}.svg`}
+          />
+          <Typography variant="h4">
+            {patientDetails.name}
+            <GenderIcon gender={patientDetails.gender} />
+          </Typography>
+
+          <Typography>SSN: {patientDetails.ssn}</Typography>
+          <Typography>Occupation: {patientDetails.occupation}</Typography>
+        </div>
+
+        <Typography variant="h5" mt={2}>
+          Entries
+        </Typography>
+        <Stack spacing={2}>
+          {patientDetails?.entries?.length ? (
+            patientDetails.entries.map((entry: Entry) => (
+              <EntryDetails entry={entry} key={entry.id} />
+            ))
+          ) : (
+            <p>No entries..</p>
+          )}
+        </Stack>
+      </Container>
     </div>
   );
 };

@@ -1,0 +1,21 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+body {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+.entry-details {
+  padding: 0.5rem 0.8rem;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+.entry-details .field {
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+.entry-details .top {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}

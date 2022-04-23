@@ -4,8 +4,8 @@ import { Route, Link, Routes, useMatch } from "react-router-dom";
 import { Button, Divider, Container } from "@material-ui/core";
 
 import { apiBaseUrl } from "./constants";
-import { useStateValue, setPatients } from "./state";
-import { Patient } from "./types";
+import { useStateValue, setPatients, setDiagnoses } from "./state";
+import { Diagnosis, Patient } from "./types";
 
 import PatientListPage from "./PatientListPage";
 import { Typography } from "@material-ui/core";
@@ -16,6 +16,16 @@ const App = () => {
   React.useEffect(() => {
     void axios.get<void>(`${apiBaseUrl}/ping`);
 
+    const fetchDiagnosesList = async () => {
+      try {
+        const { data: diagnoses } = await axios.get<Diagnosis[]>(
+          `${apiBaseUrl}/diagnoses`
+        );
+        dispatch(setDiagnoses(diagnoses));
+      } catch (e) {
+        console.error(e);
+      }
+    };
     const fetchPatientList = async () => {
       try {
         const { data: patientListFromApi } = await axios.get<Patient[]>(
@@ -27,6 +37,7 @@ const App = () => {
       }
     };
     void fetchPatientList();
+    void fetchDiagnosesList();
   }, [dispatch]);
 
   const patientMatch = useMatch("/patients/:id");
