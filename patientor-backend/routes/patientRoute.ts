@@ -1,10 +1,12 @@
 import { Router } from "express";
 import {
+  addEntry,
   create,
   getAll,
   getById,
   toNewPatientEntry,
 } from "../services/patientService";
+import { parseEntry } from "../util/parsers";
 
 const router = Router();
 
@@ -25,6 +27,15 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   const newPatient = toNewPatientEntry(req.body);
   const saved = create(newPatient);
+  res.json(saved);
+});
+router.post("/:id/entries", (req, res) => {
+  const newEntry = parseEntry(req.body);
+  if (!getById(req.params.id)) {
+    res.status(404).json({ error: "Patient not found" });
+    return;
+  }
+  const saved = addEntry(req.params.id, newEntry);
   res.json(saved);
 });
 

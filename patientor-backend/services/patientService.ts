@@ -1,5 +1,5 @@
 import patientData from "../data/patient";
-import { NewPatientEntry, PublicPatient, Patient } from "../types";
+import { NewPatientEntry, PublicPatient, Patient, Entry } from "../types";
 import { nanoid } from "nanoid";
 import {
   parseDate,
@@ -21,6 +21,12 @@ export const create = (patient: NewPatientEntry): Patient => {
   const newPatient = { ...patient, id, entries: [] };
   patientData.push(newPatient);
   return newPatient;
+};
+export const addEntry = (patientId: string, entry: Entry): Entry => {
+  const index = patientData.findIndex((p) => p.id === patientId);
+  patientData[index].entries.push(entry);
+
+  return entry;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

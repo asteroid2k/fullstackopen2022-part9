@@ -2,15 +2,27 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiBaseUrl } from "../constants";
-import { updatePatient, useStateValue } from "../state";
+import { addPatientEntry, updatePatient, useStateValue } from "../state";
 import { Entry, Patient } from "../types";
 
-import { Avatar, Container, Stack, Typography } from "@mui/material";
+import { Avatar, Button, Container, Stack, Typography } from "@mui/material";
 import GenderIcon from "../components/GenderIcon";
 import EntryDetails from "../components/EntryDetails";
+import { EntryFormValues } from "../AddEntryModal/AddEntryForm";
+import AddEntryModal from "../AddEntryModal";
 
 const PatientView = ({ patient }: { patient: Patient | null }) => {
   const [, dispatch] = useStateValue();
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
 
   const { id = "" } = useParams<{ id: string }>();
   const [err, setErr] = useState<string | null>(null);
@@ -29,6 +41,26 @@ const PatientView = ({ patient }: { patient: Patient | null }) => {
         setErr("Patient not Found");
       }
       console.error(e);
+    }
+  };
+  const submitEntry = async (values: EntryFormValues) => {
+    try {
+      const { data: entry } = await axios.post<Entry>(
+        `${apiBaseUrl}/patients/${id}/entries`,
+        values
+      );
+      dispatch(addPatientEntry({ id, entry }));
+      closeModal();
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        console.error(e?.response?.data || "Unrecognized axios error");
+        setError(
+          String(e?.response?.data?.error) || "Unrecognized axios error"
+        );
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
     }
   };
 
@@ -75,6 +107,20 @@ const PatientView = ({ patient }: { patient: Patient | null }) => {
             <p>No entries..</p>
           )}
         </Stack>
+
+        <AddEntryModal
+          modalOpen={modalOpen}
+          onSubmit={submitEntry}
+          error={error}
+          onClose={closeModal}
+        />
+        <Button
+          style={{ marginTop: "1.5rem" }}
+          variant="outlined"
+          onClick={() => openModal()}
+        >
+          Add Entry
+        </Button>
       </Container>
     </div>
   );
